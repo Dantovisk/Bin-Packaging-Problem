@@ -1,0 +1,13 @@
+vm_id,vmcorecountbucket,vmmemorybucket
+vm0000,8,32
+vm0001,2,4
+vm0002,2,8
+vm0003,2,2
+vm0004,8,64
+vm0005,4,32
+vm0006,>24,>64
+vm0007,2,8
+vm0008,2,4
+vm0009,2,4
+vm0010,2,4
+vm0011,4,8

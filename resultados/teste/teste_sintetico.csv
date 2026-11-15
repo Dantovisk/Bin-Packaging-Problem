@@ -1,0 +1,6 @@
+instancia,n_vms,metodo,reforcos,status,custo,bound,gap,bound_arred,gap_arred,tempo,servidores_tipo1,servidores_tipo2,servidores_tipo3,servidores_vazios,ub_guloso,lb1,lb2,lb3,gap_lb3,S_1,S_2,S_3,n_vars,n_restricoes,nos,tempo_limite,threads,warm_start,escala_custo,valida,mensagem,maquina,data
+teste_12_1,12,gurobi,nenhum,otimo,200.0,200.0,0.0,200.0,0.0,0.033,2,0,0,0,200,81.4844,98.5417,200.0,0.0,2,1,1,52,20,1,60.0,1,True,False,True,,vm | x86_64 | 2 cpus | Linux 6.18.44-fc-v470,2026-11-14T14:08:54
+teste_12_1,12,scip,nenhum,otimo,200.0,200.0,0.0,200.0,0.0,0.008,2,0,0,0,200,81.4844,98.5417,200.0,0.0,2,1,1,52,20,1,60.0,1,True,False,True,,vm | x86_64 | 2 cpus | Linux 6.18.44-fc-v470,2026-11-14T14:08:54
+teste_50_1,50,gurobi,nenhum,otimo,500.0,500.0,0.0,500.0,0.0,0.164,5,0,0,0,540,331.9531,417.5,460.0,0.086957,5,3,4,612,74,36,60.0,1,True,False,True,,vm | x86_64 | 2 cpus | Linux 6.18.44-fc-v470,2026-11-14T14:08:54
+teste_50_1,50,scip,nenhum,otimo,500.0,500.0,0.0,500.0,0.0,0.821,5,0,0,0,540,331.9531,417.5,460.0,0.086957,5,3,4,612,74,1,60.0,1,True,False,True,,vm | x86_64 | 2 cpus | Linux 6.18.44-fc-v470,2026-11-14T14:08:55
+teste_100_1,100,scip,nenhum,otimo,820.0,820.0,0.0,820.0,0.0,1.466,3,2,2,0,860,582.9688,712.9167,780.0,0.051282,8,6,7,2121,142,83,60.0,1,True,False,True,,vm | x86_64 | 2 cpus | Linux 6.18.44-fc-v470,2026-11-14T14:08:57

@@ -17,7 +17,7 @@ df_bruto = pd.read_csv("trace_data_vmtable_vmtable.csv.gz", names=colunas_azure,
 df_bpp = df_bruto[["vmid", "vmcorecount", "vmmemory"]]
 
 # Salva o arquivo limpo para os solvers (Gurobi/SCIP)
-df_bpp.to_csv(f"instancia_{N_AMOSTRAS}_vms.csv", index=False)
+df_bpp.to_csv(f"instancias/instancia_{N_AMOSTRAS}_vms.csv", index=False)
 
 print("Amostra gerada com sucesso:")
 print(df_bpp.head())

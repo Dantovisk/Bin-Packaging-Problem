@@ -1,0 +1,86 @@
+{
+ "instancia": "instancia_50_vms",
+ "metodo": "scip",
+ "status": "otimo",
+ "custo": 480.0,
+ "servidores": [
+  {
+   "id": "t1_0",
+   "tipo": 1,
+   "nome_tipo": "Uso geral",
+   "vms": [
+    "x/XsOfHO4ocsV99i4NluqKDuxctW2MMVmwqOPAlg4wp8mqbBOe3wxBlQo0+Qx+uf",
+    "H5CxmMoVcZSpjgGbohnVA3R+7uCTe/hM2ht2uIYi3t7KwXB4tkBxmZHBrt2A4x+n",
+    "wR/G1YUjpMP4zUbxGM/XJNhYS8cAK3SGKM2tqhF7VdeTUYHGktQiKQNoDTtYvnAc",
+    "z5i2HiSaz6ZdLR6PXdnDjGva3jIlkMPXx23VtfXx9q3dXFRBQrxCOj7sHUsrmFLa",
+    "aTSXW3N1KepxKYwKumd7T1+f7DkGolSKV8EArYAdctjD26YqSMKezCVSdvmSgqIQ",
+    "ztRY/Sk5mrSFFcpy2usZ0YZZ7Eumq130/5BB8WVXfWaYvFkU+EhXUQ2kOFkCXuCw",
+    "4VmzD0pkdj8stfQnGiT8PYfv6lcNxHD/VtdhThSX+qEeFScW+t0cvi3qP2Xt8T48",
+    "gbXBZmWApbc366hNHM6ykVCbkq2G8vsffTs760z8JxNV4AlH5B89s7hU9gteRCNF",
+    "hBjPmiiqmwrfI1K/a0m6VredDv5LDgS674GNkUddawCEbk+DBgGGfG8JPamaIiqV",
+    "fVf9vAzKCUoQALKqyQ2NqDlS4GFF6u6frcFPxELBLGanHmSwx9TbsGPZjUKlF9P3",
+    "judWOqhujEm7qMx6etie3S/Y0IvlJ1yf25ln3bGpI6FDxyM1Qo7lZ01MwYSy3HUU",
+    "be0EKMfwG/6EyPd3ZSNp77K2iDlqTsouKkPFBeasDFRRi/3inOUmBoO0JL21YaNC",
+    "NA474ho+qGUCV8d49TAJDgVharR34XOn4azoD+VLFdSdldKNpIs2EgXctjmH3Mf6",
+    "OA8bSrGYqmM/kGWlO+wGdQjTh59WkKlvCLb1Mq24ItTWhTa20AY9EqJ7YRI2N5UV",
+    "XarKmregihb9bXjVBiP9xD6798onAmK3drgmhbegehppwoflImtSqZwgidCFTqnh",
+    "UwE8Zh5nl6sFLaD93DUCS8M2cmRLg4wOpIC2p66ce+EnBTMI6aD0m9CL6SNCWYQj",
+    "4CLRf8gnWpSSOYmhcI5cO/bZzm1HGJm1+8ZLrOugKwVkzN7NWcU75SlHu32xRDZd",
+    "gceHRgifVz76+tyilJ2Fap3xKhkDz1hOV/7qalejR7IMHJUpZ+Oi4zV7UvDS7E6f",
+    "BPSUFh90f+XPz4p4RVrzviGruD1nM1EmL+PWBq2/H92rYmvWHtNpS7A3TZ5gTSLM",
+    "QTYwymwXmMUNTXJsTax+q4sh+OTZpRhV1jKYZ+UXbZaL7V6tAEUN1JIhFCmC9eZH",
+    "6kuZ+YuvrQuSJXoQQG3Gpk+nnh+R557JKv90QdzJSN5CFt40diGuK/jJ6srk+0mL",
+    "qMDKZxy2MeAlPbBVlz/f54cDj73NKmgf2c2fs1KeCvecnuPNwFrOxaELGbN1sqcA"
+   ]
+  },
+  {
+   "id": "t1_1",
+   "tipo": 1,
+   "nome_tipo": "Uso geral",
+   "vms": [
+    "aGwlB5/J8hJBiQ/GlTz8oYPJOUdjoeQ4PUQfaCIGUZuLfzERp1ICRvJjq4RkyyxD",
+    "qUJgNnu43kQp3S88Ucdxbo6pP2/J+d5JLbPQuKyjD5ARK7UZzg1ZgFrjBlVfGwRa",
+    "xTlE443MWTwQAI6qMqZSXqYqzPPOdMI6gkAQj8n3hhBbAmNwH5xLc/i1l/5j9wHz",
+    "VAFwWWseFvqyZz9nyNEVqsp0LPJOTo+BRYvGZiQEWQvyEGXAqyO+i55eoMlUqYGP",
+    "lOdxYwIW6d10PAaHPLvxNnAvPQ2+OGpw8vStCvDTJPRSUmW8Z66um/kRgVVpYHTV",
+    "aBZOFe7bjAg1T5tz8XiJVUDsyfHsC87tG5jq1SKwSSbtJMg+RCtLYPGMDDQxxXCx",
+    "TqHp8Y0ngI6c0Zx/Dh9cKpWxOKz498Pc0UQTJaFhadGN6FcrZfIdswX7W2VNnnvf",
+    "4Se+vKaSGVYRWo0YijSedLzHP+SiSfW+r5Y3f91nQf+6LBE6F5SnXl6mQ9Ok0XwA",
+    "gOmc2YGnRrtnp4BRgWyPhyq95Rgh4PUyEc4PUg3b5sTaOa8REp1ieUC9brNlh22N",
+    "xaGqEbUL2uoUjzqh8oEIfU3k9Q9o8K0OifKeB0U54T0OqopPiCrR0PFaGTOauXwL",
+    "Mi3IA3D/PNj99d5L22Xme6o7nQq3S5x+cmJdy82jwSjOA0uqTZpSklW6RQ9saw9a",
+    "LxgaoCu482I/Cz+DMmQ9aOzyCdpmnI4Tu4nH3BOLRnDxCSRBLorT1bA+KJ9dbADs"
+   ]
+  },
+  {
+   "id": "t2_2",
+   "tipo": 2,
+   "nome_tipo": "Memória",
+   "vms": [
+    "1XiU+KpvIa3T1XP8kk3ZY71Of03+ogFL5Pag9Mc2jBuh0YqeW0Zcb9lepKLdPEDg",
+    "n77nP00/UpJmT+Yx1ZkDphvAqPoHU8yUpDCwyUtPNlRENqvNp6Inya1eiy7VP1+x",
+    "uSkGH3DS6BVo3RFnw3GZb6WCFSmGgvgKi4HIj08yxO4f5ladUQc3pqDOtqRN0W9+",
+    "bJoIb8ras2ZNNSdAz3CAu4HYRd6k9MOqij/+6/+/5XaYw4+EoGdUEr74DCi974gJ",
+    "BLuzIFXaPzJc8uaSD/BeCngBUhZFYDijD4zKXgwlabzTM3bRMM8y8hDezG8PVHib",
+    "RgFzUxb/2x081EBS/9xjlPOM3iuiQExuPyyThCcKE5ukzHczB2Pw2l2w9pdCzcbh",
+    "3zUOIbiN3MQcGLoqCBWdmdVzWilou6ER0vOy5R4igoznBSi09pgLiChrIoCjZNXH",
+    "nvO24zFunFo3MoD55OgZp04aqrkmeMuC7jzbiTN8SseZra2L4eiGl/cYRj9fxTDv"
+   ]
+  },
+  {
+   "id": "t2_3",
+   "tipo": 2,
+   "nome_tipo": "Memória",
+   "vms": [
+    "aoV32RWHPiZy8SSvQbyrwDycLyEdq2nhU3oH3ID65zhco7K8GzOcfJGv66VvI5cl",
+    "GgKzfQazc1i39GUwKuMplYRwvbq3EYroqGxv2Qyb7Eu4cHLI3G36RywM9jisOWaE",
+    "O6VR+43wy2PVjMSYb51/3yEXmwi7uBKaI1mqZtPbYZCZ3RmaDATqEBwOsBXMXVKS",
+    "GfeuOw047bGVAHyWQdyiiZd3k8wljsWYpj/7544dbgjqa/krEmUEh6IDvLF8uXRS",
+    "M7bcr4WSmSVfeQhZlDC5fJHMPCN5W2vKl0gOBOpC4bEjg3iAoUuGlSXa/gUnRrqc",
+    "odf/p4xCp/FHL3303hTlf/1hK9AF0BSBflUqgHfV6gbrQl0v/cbrFx0XuDAIOS/O",
+    "+4/yWfitcnkRl2lDxUTifp3kplmpk2sBFDE2KU1fzSQxNc1RCm0wS7ZgalQ2A1Vt",
+    "qzcd95UmhTBOHj1RCUDuoroWnCY+g3RNdU+eCFD91DpGB9CZtlx3vabJQsYeyesP"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,3 @@
+pandas        # particao_dataset.py
+gurobipy      # modelo/modelo_gurobi.py (instâncias de 100 e 500 VMs exigem licença acadêmica)
+pyscipopt     # modelo/modelo_scip.py (já traz o SCIP)
