@@ -1,16 +1,16 @@
 """Roda Gurobi e/ou SCIP nas instâncias e registra os resultados em CSV.
 
 Exemplos (a partir da raiz do repositório; as instâncias são os CSVs
-instancias/instancia_<N>_vms.csv gravados pelo particao_dataset.py):
+data/instancias/instancia_<N>_vms.csv):
 
     # instâncias reais, os dois solvers, 600 s, sem reforços
-    python modelo/rodar_solvers.py instancias/instancia_50_vms.csv instancias/instancia_100_vms.csv instancias/instancia_500_vms.csv
+    python -m bpp.experimentos.rodar data/instancias/instancia_50_vms.csv data/instancias/instancia_100_vms.csv
 
     # teste dos reforços na instância de 100 VMs, só SCIP
-    python modelo/rodar_solvers.py instancias/instancia_100_vms.csv --solver scip --reforcos todos
+    python -m bpp.experimentos.rodar data/instancias/instancia_100_vms.csv --solver scip --reforcos todos
 
     # só uma instância, mostrando o log do solver
-    python modelo/rodar_solvers.py instancias/instancia_50_vms.csv --solver gurobi --verbose
+    python -m bpp.experimentos.rodar data/instancias/instancia_50_vms.csv --solver gurobi --verbose
 
 A Pessoa 5 pode importar `rodar_instancia` direto no rodar_experimentos.py.
 """
@@ -23,17 +23,14 @@ import glob
 import json
 import os
 import platform
-import sys
 import time
 from datetime import datetime
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
-from instancia import Instancia, ler_csv  # noqa: E402
-from limitantes import (calcular_S, custo, limitantes_inferiores,  # noqa: E402
-                        melhor_guloso, verificar)
-from modelo_comum import (Opcoes, Resultado, arredondar_bound, calcular_gap,  # noqa: E402
-                          mdc_custos)
+from bpp.modelo.comum import (Opcoes, Resultado, arredondar_bound, calcular_gap,
+                              mdc_custos)
+from bpp.modelo.instancia import Instancia, ler_csv
+from bpp.modelo.limitantes import (calcular_S, custo, limitantes_inferiores,
+                                   melhor_guloso, verificar)
 
 CONFIGS = {
     "nenhum":   dict(reforco_xy=False, simetria=False),
@@ -53,9 +50,9 @@ COLUNAS = ["instancia", "n_vms", "metodo", "reforcos", "status", "custo", "bound
 
 def _resolver(solver: str):
     if solver == "gurobi":
-        from modelo_gurobi import resolver
+        from bpp.modelo.gurobi import resolver
     elif solver == "scip":
-        from modelo_scip import resolver
+        from bpp.modelo.scip import resolver
     else:
         raise ValueError(solver)
     return resolver

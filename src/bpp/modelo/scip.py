@@ -6,10 +6,10 @@ import time
 
 from pyscipopt import Model, quicksum
 
-from instancia import Instancia
-from limitantes import Solucao
-from modelo_comum import (Opcoes, Resultado, calcular_gap, indices_servidores,
-                          fator_escala, mapear_warm_start, pares_validos)
+from bpp.modelo.instancia import Instancia
+from bpp.modelo.limitantes import Solucao
+from bpp.modelo.comum import (Opcoes, Resultado, calcular_gap, fator_escala,
+                              indices_servidores, mapear_warm_start, pares_validos)
 
 _STATUS = {
     "optimal": "otimo",

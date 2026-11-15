@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import math
 
-from instancia import Instancia, TipoServidor
+from bpp.modelo.instancia import Instancia, TipoServidor
 
 # Uma solução é uma lista de servidores ligados: (tipo k, [índices das VMs])
 Solucao = list[tuple[int, list[int]]]
