@@ -24,6 +24,7 @@ import glob
 import json
 import os
 import platform
+import subprocess
 import time
 from datetime import datetime
 
@@ -51,8 +52,24 @@ COLUNAS = ["instancia", "n_vms", "metodo", "reforcos", "status", "custo", "bound
            "mensagem", "maquina", "data"]
 
 
+def modelo_cpu() -> str:
+    # platform.processor() volta vazio no Linux, onde rodam os experimentos
+    try:
+        if platform.system() == "Linux":
+            with open("/proc/cpuinfo", encoding="utf-8") as f:
+                for linha in f:
+                    if linha.startswith("model name"):
+                        return " ".join(linha.split(":", 1)[1].split())
+        elif platform.system() == "Darwin":
+            return subprocess.run(["sysctl", "-n", "machdep.cpu.brand_string"],
+                                  capture_output=True, text=True, check=True).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        pass
+    return platform.processor() or platform.machine()
+
+
 def maquina() -> str:
-    return f"{platform.node()} | {platform.processor() or platform.machine()} | " \
+    return f"{platform.node()} | {modelo_cpu()} | " \
            f"{os.cpu_count()} cpus | {platform.system()} {platform.release()}"
 
 

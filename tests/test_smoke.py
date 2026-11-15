@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 from bpp.dados.azure import COLUNAS, AzureVMTable, garantir_csv
+from bpp.experimentos.rodar import maquina
 from bpp.modelo.comum import Opcoes
 from bpp.modelo.instancia import ler_csv
 from bpp.modelo.limitantes import (calcular_S, custo, limitantes_inferiores,
@@ -35,6 +36,11 @@ def test_solver_otimo(inst, nome):
     assert verificar(inst, res.solucao) == []
     assert res.custo == pytest.approx(custo(inst, res.solucao))
     assert res.custo >= limitantes_inferiores(inst)["lb3"] - 1e-6
+
+
+def test_maquina_tem_modelo_da_cpu():
+    host, cpu, *_ = maquina().split(" | ")
+    assert cpu and cpu not in ("x86_64", "aarch64", "arm64")
 
 
 def test_particionar_sem_rede(tmp_path):
