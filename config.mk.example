@@ -22,3 +22,8 @@
 # SLURM_MEM      = 32G
 # SLURM_TEMPO    = 48:00:00
 # SLURM_ARGS     = --account=meu_projeto --mail-type=END
+# slurm-experimentos (estimativa por job, ver docs/cluster.md):
+# SLURM_FOLGA     = 2
+# SLURM_MARGEM    = 600
+# SLURM_FATOR_MEM = 3
+# SLURM_MEM_MIN   = 4

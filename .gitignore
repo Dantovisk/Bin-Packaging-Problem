@@ -163,3 +163,4 @@ cython_debug/
 data/raw/
 config.mk
 logs/
+resultados/parcial/

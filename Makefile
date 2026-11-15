@@ -41,6 +41,13 @@ SLURM_TEMPO    ?= 24:00:00
 SLURM_PARTICAO ?=
 SLURM_LOG_DIR  ?= logs
 SLURM_ARGS     ?=
+# slurm-experimentos: tempo/memória estimados por job (docs/cluster.md)
+SLURM_FOLGA     ?= 1.5
+SLURM_MARGEM    ?= 300
+SLURM_FATOR_MEM ?= 2
+SLURM_MEM_MIN   ?= 2
+SLURM_DRY       ?=
+RODADA          ?=
 
 instancias_de = $(foreach n,$(1),$(INST_DIR)/instancia_$(n)_vms.csv)
 INSTANCIAS     = $(call instancias_de,$(NS))
@@ -48,7 +55,8 @@ COMUM          = --solver $(SOLVERS) --tempo $(TEMPO) --threads $(THREADS) $(EXT
 
 .DEFAULT_GOAL := help
 .PHONY: help uv setup dados instancias sinteticas solvers reforcos s-ingenuo \
-        experimentos teste-sintetico tabela test slurm clean clean-dados
+        experimentos teste-sintetico tabela test slurm slurm-experimentos juntar \
+        clean clean-dados
 
 help: ## Mostra esta ajuda
 	@echo "Uso: make <alvo> [VAR=valor ...]"
@@ -61,7 +69,9 @@ help: ## Mostra esta ajuda
 		THREADS "$(THREADS)" REFORCOS "$(REFORCOS)" SAIDA "$(SAIDA)" \
 		SOLUCOES "$(SOLUCOES)" EXTRA_ARGS "$(EXTRA_ARGS)" DATA_DIR "$(DATA_DIR)" \
 		RESULT_DIR "$(RESULT_DIR)" SLURM_ALVO "$(SLURM_ALVO)" SLURM_CPUS "$(SLURM_CPUS)" \
-		SLURM_MEM "$(SLURM_MEM)" SLURM_TEMPO "$(SLURM_TEMPO)" SLURM_PARTICAO "$(SLURM_PARTICAO)"
+		SLURM_MEM "$(SLURM_MEM)" SLURM_TEMPO "$(SLURM_TEMPO)" SLURM_PARTICAO "$(SLURM_PARTICAO)" \
+		SLURM_FOLGA "$(SLURM_FOLGA)" SLURM_MARGEM "$(SLURM_MARGEM)" \
+		SLURM_FATOR_MEM "$(SLURM_FATOR_MEM)" SLURM_MEM_MIN "$(SLURM_MEM_MIN)" RODADA "$(RODADA)"
 
 uv: ## Instala o uv em ~/.local/bin se não existir
 	@command -v $(UV) >/dev/null 2>&1 && echo "uv já instalado: $$(command -v $(UV))" || \
@@ -103,6 +113,19 @@ tabela: ## Tabela de resultados a partir de SAIDA (TABELA_ARGS)
 
 test: ## Testes automatizados (pytest)
 	$(RUN) pytest -q
+
+slurm-experimentos: setup instancias ## experimentos no SLURM: 1 job por execução + job que junta os CSVs
+	$(RUN) bpp-slurm --ns $(NS) --ns-reforcos $(NS_REFORCOS) --ns-ingenuo $(NS_INGENUO) \
+		--solvers $(SOLVERS) --reforcos $(REFORCOS) --tempo $(TEMPO) --threads $(THREADS) \
+		--extra-args="$(EXTRA_ARGS)" --inst-dir $(INST_DIR) --raw-dir $(RAW_DIR) \
+		--resultados $(RESULT_DIR) --solucoes="$(SOLUCOES)" --uv $(UV) \
+		--folga $(SLURM_FOLGA) --margem $(SLURM_MARGEM) --fator-mem $(SLURM_FATOR_MEM) \
+		--mem-min $(SLURM_MEM_MIN) --log-dir $(SLURM_LOG_DIR) --sbatch-args="$(SLURM_ARGS)" \
+		$(if $(SLURM_PARTICAO),--particao $(SLURM_PARTICAO)) \
+		$(if $(RODADA),--rodada $(RODADA)) $(if $(SLURM_DRY),--dry-run)
+
+juntar: ## Junta os CSVs parciais de RODADA em RESULT_DIR (se o job de junção falhou)
+	$(RUN) bpp-juntar $(RESULT_DIR)/parcial/$(RODADA) --resultados $(RESULT_DIR)
 
 slurm: setup ## Submete `make SLURM_ALVO` como um único job SLURM (repassa as variáveis)
 	@mkdir -p $(SLURM_LOG_DIR)

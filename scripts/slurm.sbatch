@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Job SLURM genérico: executa o comando recebido. Submetido por `make slurm`.
+# Job SLURM genérico: executa o comando recebido. Submetido por `make slurm` e `make slurm-experimentos`.
 #SBATCH --job-name=bpp
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=16G
