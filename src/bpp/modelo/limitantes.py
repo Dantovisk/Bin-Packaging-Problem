@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import math
 
-from instancia import Instancia, TipoServidor
+from bpp.modelo.instancia import Instancia, TipoServidor
 
 # Uma solução é uma lista de servidores ligados: (tipo k, [índices das VMs])
 Solucao = list[tuple[int, list[int]]]
@@ -179,7 +179,7 @@ def calcular_S(inst: Instancia, ub: float) -> dict[int, int]:
 
 
 def verificar(inst: Instancia, sol: Solucao) -> list[str]:
-    """Checagem rápida (o validador oficial é o validador.py da Pessoa 2)."""
+    """Checagem rápida (o validador oficial, independente deste código, é o bpp-validador)."""
     erros = []
     tipos = {t.k: t for t in inst.tipos}
     vistos = [0] * inst.n

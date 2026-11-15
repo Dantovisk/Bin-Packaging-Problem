@@ -1,0 +1,32 @@
+# Copie para config.mk (ignorado pelo git) e ajuste para a sua máquina.
+# Valores aqui valem como padrão; a linha de comando ainda tem prioridade.
+
+# --- experimento ---
+# NS       = 50 100 500
+# SOLVERS  = scip
+# TEMPO    = 3600
+# THREADS  = 4
+# EXTRA_ARGS = --verbose
+
+# --- caminhos ---
+# DATA_DIR   = /scratch/$(USER)/bpp-data
+# RESULT_DIR = resultados
+
+# --- cluster: home com cota pequena -> venv e cache do uv no scratch ---
+# export UV_CACHE_DIR = /scratch/$(USER)/uv-cache
+# export UV_PROJECT_ENVIRONMENT = /scratch/$(USER)/bpp-venv
+# export GRB_LICENSE_FILE = $(HOME)/gurobi.lic
+
+# --- SLURM ---
+# SLURM_PARTICAO = cpu
+# SLURM_MEM      = 32G
+# SLURM_TEMPO    = 48:00:00
+# SLURM_ARGS     = --account=meu_projeto --mail-type=END
+# slurm-experimentos (estimativa por job, ver docs/cluster.md):
+# SLURM_FOLGA     = 2
+# SLURM_MARGEM    = 600
+# SLURM_FATOR_MEM = 3
+# SLURM_MEM_MIN   = 4
+# Jobs Gurobi simultâneos (sessões da licença WLS acadêmica = 2) e espera do token:
+# GUROBI_SIMULT = 2
+# GUROBI_ESPERA = 300

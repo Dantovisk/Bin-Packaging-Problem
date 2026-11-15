@@ -3,9 +3,9 @@
 Usam faixas de tamanho de VM do Azure (núcleos 2/4/8/24/>24, RAM 2/4/8/32/64/>64 GB),
 mas NÃO são o dataset real: as N primeiras linhas do vmtable têm valores exatos e poucos
 perfis (ex.: 1 núcleo/1,75 GB, 2/3,5, 8/56). Os resultados do relatório devem usar os
-CSVs do particao_dataset.py.
+CSVs gerados por `bpp-dataset`.
 
-    python modelo/gerar_instancia_teste.py --n 50 100 500 --pasta instancias/teste
+    bpp-sintetico --n 50 100 500 --pasta data/instancias/teste
 """
 
 import argparse
@@ -34,7 +34,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, nargs="+", default=[50, 100, 500])
     ap.add_argument("--repeticoes", type=int, default=1)
-    ap.add_argument("--pasta", default="instancias/teste")
+    ap.add_argument("--pasta", default="data/instancias/teste")
     a = ap.parse_args()
     os.makedirs(a.pasta, exist_ok=True)
     for n in a.n:
