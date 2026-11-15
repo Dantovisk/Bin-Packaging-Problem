@@ -159,4 +159,5 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-trace_data_vmtable_vmtable.csv.gz
+# Projeto
+data/raw/

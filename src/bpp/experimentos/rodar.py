@@ -1,16 +1,17 @@
 """Roda Gurobi e/ou SCIP nas instâncias e registra os resultados em CSV.
 
-Exemplos (a partir da raiz do repositório; as instâncias são os CSVs
-data/instancias/instancia_<N>_vms.csv):
+Exemplos (a partir da raiz do repositório). Instâncias reais ausentes
+(data/instancias/instancia_<N>_vms.csv) são geradas a partir do dataset, que é
+baixado se preciso.
 
     # instâncias reais, os dois solvers, 600 s, sem reforços
-    python -m bpp.experimentos.rodar data/instancias/instancia_50_vms.csv data/instancias/instancia_100_vms.csv
+    bpp-solvers data/instancias/instancia_50_vms.csv data/instancias/instancia_100_vms.csv
 
     # teste dos reforços na instância de 100 VMs, só SCIP
-    python -m bpp.experimentos.rodar data/instancias/instancia_100_vms.csv --solver scip --reforcos todos
+    bpp-solvers data/instancias/instancia_100_vms.csv --solver scip --reforcos todos
 
     # só uma instância, mostrando o log do solver
-    python -m bpp.experimentos.rodar data/instancias/instancia_50_vms.csv --solver gurobi --verbose
+    bpp-solvers data/instancias/instancia_50_vms.csv --solver gurobi --verbose
 
 A Pessoa 5 pode importar `rodar_instancia` direto no rodar_experimentos.py.
 """
@@ -26,6 +27,7 @@ import platform
 import time
 from datetime import datetime
 
+from bpp.dados.azure import garantir_csv
 from bpp.modelo.comum import (Opcoes, Resultado, arredondar_bound, calcular_gap,
                               mdc_custos)
 from bpp.modelo.instancia import Instancia, ler_csv
@@ -141,7 +143,8 @@ def anexar_csv(linha: dict, caminho: str) -> None:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("instancias", nargs="+", help="CSVs do particionador (aceita curingas)")
+    ap.add_argument("instancias", nargs="+",
+                    help="CSVs das instâncias (aceita curingas; instancia_<N>_vms.csv ausente é gerada)")
     ap.add_argument("--solver", nargs="+", default=["gurobi", "scip"],
                     choices=list(SOLVERS))
     ap.add_argument("--tempo", type=float, default=600.0, help="limite de tempo (s)")
@@ -164,6 +167,7 @@ def main() -> None:
     a = ap.parse_args()
 
     arquivos = sorted({f for padrao in a.instancias for f in (glob.glob(padrao) or [padrao])})
+    arquivos = [str(garantir_csv(f)) for f in arquivos]
     configs = list(CONFIGS) if a.reforcos == "todos" else [a.reforcos]
     leitura = dict(col_id=a.col_id, col_cpu=a.col_cpu, col_ram=a.col_ram)
 
