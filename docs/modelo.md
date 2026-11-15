@@ -13,6 +13,7 @@ lendo as instâncias de `data/instancias/`.
 | `src/bpp/modelo/scip.py` | `ScipSolver` (`pyscipopt`) |
 | `src/bpp/experimentos/rodar.py` | `bpp-solvers`: roda os solvers e grava `resultados/solvers.csv` + JSONs das soluções |
 | `src/bpp/experimentos/tabela.py` | `bpp-tabela`: monta a tabela da seção (Markdown ou `--latex`) a partir do CSV |
+| `src/bpp/experimentos/validador.py` | `bpp-validador`: valida JSONs de solução de qualquer método contra as instâncias |
 | `src/bpp/dados/azure.py` | `bpp-dataset`: baixa o vmtable e gera `instancia_<N>_vms.csv` |
 | `src/bpp/dados/sintetico.py` | `bpp-sintetico`: instâncias **sintéticas** só para testar o código (não usar no relatório) |
 
@@ -108,11 +109,41 @@ n_restricoes, nos, tempo_limite, threads, warm_start, escala_custo, valida, mens
 Status: `otimo`, `limite_tempo` (tem solução, não provou otimalidade), `sem_solucao`,
 `inviavel`, `erro` (ex.: licença restrita do Gurobi).
 
-`resultados/solucoes/<instancia>__<metodo>.json`, no formato da seção 3.1 do relatório
-(lista de servidores abertos com o tipo k e as VMs alocadas), para o `validador.py`:
+`resultados/solucoes/<instancia>__<metodo>.json` (reforços em `solucoes/reforcos/`, `S_k = n` em
+`solucoes/s_ingenuo/`, sintéticas em `resultados/teste/solucoes/`; `<metodo>` inclui a
+configuração, ex.: `scip+simetria`, `scip+nenhum+S=n`), no formato da seção 3.1 do relatório
+(lista de servidores abertos com o tipo k e as VMs alocadas), lido pelo validador:
 
 ```json
 {"instancia": "instancia_30_vms", "metodo": "gurobi", "status": "otimo", "custo": 280.0,
  "servidores": [{"id": "t2_0", "tipo": 2, "nome_tipo": "Memória",
                  "vms": ["1XiU+KpvIa3T1XP8kk3ZY71Of03+ogFL5Pag9Mc2jBuh0YqeW0Zcb9lepKLdPEDg", "..."]}]}
 ```
+
+## Validação das soluções
+
+`make validador` (ou `bpp-validador`) confere cada JSON contra a instância CSV indicada
+no campo `instancia` (procurada em `data/instancias/` e `data/instancias/teste/`; uma
+instância real ausente é gerada a partir do dataset). Não usa o código dos solvers.
+Todos os experimentos (`solvers`, `reforcos`, `s-ingenuo`, `teste-sintetico`) gravam
+JSON; execuções sem solução (`erro`, `sem_solucao`, `inviavel`) não geram arquivo.
+
+Erros (solução inválida, código de saída 1):
+
+- VM da instância faltando, alocada mais de uma vez, ou VM que não existe na instância;
+- tipo de servidor fora de {1, 2, 3};
+- soma de CPU ou RAM de um servidor acima da capacidade do tipo;
+- `custo` declarado diferente de Σ p_k dos servidores listados;
+- JSON sem a lista `servidores`.
+
+Avisos (não invalidam): servidor ligado sem VMs, `nome_tipo` incoerente com o tipo,
+custo não declarado.
+
+```bash
+make validador                                               # resultados/solucoes/ e subpastas
+make validador JSONS="resultados/solucoes/instancia_50_vms__scip.json"
+make validador JSONS="resultados/solucoes/reforcos resultados/teste/solucoes"
+make validador JSONS="saida_sa/*.json"                        # soluções de outro método
+```
+
+`JSONS` aceita arquivos, pastas (percorridas com subpastas) e curingas.

@@ -17,7 +17,7 @@ combinação (instância × solver × reforço) vira um job independente:
 2. `bpp-slurm` calcula o nº de variáveis de cada execução (sem montar o modelo) e
    estima `--time` e `--mem` (abaixo). Submete um `sbatch` por execução.
 3. Cada job grava um CSV próprio em `resultados/parcial/<RODADA>/<grupo>__<n>__<solver>__<reforço>.csv`
-   (os JSONs do grupo `solvers` vão para `resultados/solucoes/`, um arquivo por execução).
+   (os JSONs vão para `resultados/solucoes/`, `solucoes/reforcos/` e `solucoes/s_ingenuo/`, um arquivo por execução).
 4. Um job final (`--dependency=afterany`) roda `bpp-juntar`: acrescenta os parciais em
    `resultados/solvers.csv`, `reforcos.csv` e `s_ingenuo.csv`, move cada parcial para
    `juntados/` e lista as execuções que não produziram resultado.

@@ -40,18 +40,18 @@ uv run bpp-solvers data/instancias/instancia_300_vms.csv   # o runner gera se fa
 |---|---|
 | `src/bpp/dados/` | `azure.py` (download do dataset e geração das instâncias), `sintetico.py` (instâncias sintéticas) |
 | `src/bpp/modelo/` | Leitura da instância, limitantes, classe base `Solver` e os modelos Gurobi/SCIP — ver [`docs/modelo.md`](docs/modelo.md) |
-| `src/bpp/experimentos/` | `rodar.py` (roda os solvers e grava CSV/JSON), `tabela.py` (tabelas Markdown/LaTeX), `slurm.py` (submissão SLURM e junção dos CSVs) |
+| `src/bpp/experimentos/` | `rodar.py` (roda os solvers e grava CSV/JSON), `tabela.py` (tabelas Markdown/LaTeX), `validador.py` (validação das soluções JSON), `slurm.py` (submissão SLURM e junção dos CSVs) |
 | `data/raw/` | Dataset bruto baixado (não versionado) |
 | `data/instancias/` | Instâncias reais `instancia_<N>_vms.csv` |
 | `data/instancias/teste/` | Instâncias sintéticas, só para testar o código |
-| `resultados/` | `solvers.csv` (resultados principais), `reforcos.csv`, `s_ingenuo.csv` e `solucoes/` (JSONs das soluções) |
+| `resultados/` | `solvers.csv` (resultados principais), `reforcos.csv`, `s_ingenuo.csv` e `solucoes/` (JSONs das soluções; `reforcos/` e `s_ingenuo/` em subpastas) |
 | `resultados/teste/` | Resultados das instâncias sintéticas |
 | `tests/` | Testes (`make test`) |
 | `scripts/slurm.sbatch` | Job SLURM genérico usado por `make slurm` e `make slurm-experimentos` |
 | `docs/cluster.md` | Execução no cluster: um job por execução, estimativa de tempo/memória |
 | `docs/modelo.md` | Modelo, decisões de implementação e formato da saída |
 
-Comandos instalados no ambiente (`uv run <comando> --help`): `bpp-dataset`, `bpp-sintetico`, `bpp-solvers`, `bpp-tabela`, `bpp-slurm`, `bpp-juntar`.
+Comandos instalados no ambiente (`uv run <comando> --help`): `bpp-dataset`, `bpp-sintetico`, `bpp-solvers`, `bpp-tabela`, `bpp-validador`, `bpp-slurm`, `bpp-juntar`.
 
 ## Alvos do Makefile
 
@@ -65,6 +65,7 @@ Comandos instalados no ambiente (`uv run <comando> --help`): `bpp-dataset`, `bpp
 | `experimentos` | `solvers` + `reforcos` + `s-ingenuo` |
 | `sinteticas` / `teste-sintetico` | Gera / roda as instâncias sintéticas |
 | `tabela` | Tabela a partir de `SAIDA` (`TABELA_ARGS`, padrão `--latex --reforcos nenhum`) |
+| `validador` | Valida os JSONs de solução contra as instâncias (`JSONS`, padrão `resultados/solucoes` com subpastas) |
 | `test` | pytest |
 | `slurm-experimentos` | `experimentos` no SLURM, um job por execução + junção dos CSVs |
 | `juntar` | Junta manualmente os CSVs parciais de uma `RODADA` |
