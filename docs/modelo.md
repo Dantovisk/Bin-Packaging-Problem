@@ -1,71 +1,76 @@
-# modelo/ — Solução via solvers (Gurobi e SCIP)
+# Modelo — Solução via solvers (Gurobi e SCIP)
 
 Implementação do modelo do relatório (variáveis `x_ijk`, `y_jk`) nos dois solvers,
-lendo os CSVs do `particao_dataset.py`.
+lendo as instâncias de `data/instancias/`.
 
 | Arquivo | O que faz |
 |---|---|
-| `instancia.py` | Lê o CSV da instância e guarda os 3 tipos de servidor (CPU, RAM, custo) |
-| `limitantes.py` | Guloso FFD adaptado (UB), limitantes inferiores LB1 ≤ LB2 ≤ LB3 (seção 3.1 do relatório), cálculo de `S_k = ⌊UB/p_k⌋` |
-| `modelo_comum.py` | Opções, formato do resultado, partes comuns aos dois modelos |
-| `modelo_gurobi.py` | Modelo no Gurobi (`gurobipy`) |
-| `modelo_scip.py` | Modelo no SCIP (`pyscipopt`) |
-| `rodar_solvers.py` | Roda os solvers nas instâncias e grava `resultados/solvers.csv` + JSONs das soluções |
-| `tabela_solvers.py` | Monta a tabela da seção (Markdown ou `--latex`) a partir do CSV |
-| `gerar_instancia_teste.py` | Instâncias **sintéticas** só para testar o código (não usar no relatório) |
+| `src/bpp/modelo/instancia.py` | Lê o CSV da instância e guarda os 3 tipos de servidor (CPU, RAM, custo) |
+| `src/bpp/modelo/limitantes.py` | Guloso FFD adaptado (UB), limitantes inferiores LB1 ≤ LB2 ≤ LB3 (seção 3.1 do relatório), cálculo de `S_k = ⌊UB/p_k⌋` |
+| `src/bpp/modelo/comum.py` | Opções, formato do resultado, utilitários comuns aos dois modelos |
+| `src/bpp/modelo/solver.py` | Classe base `Solver`: monta os índices do modelo, warm start, escala, gap e status; `obter_solver(nome)` |
+| `src/bpp/modelo/gurobi.py` | `GurobiSolver` (`gurobipy`) |
+| `src/bpp/modelo/scip.py` | `ScipSolver` (`pyscipopt`) |
+| `src/bpp/experimentos/rodar.py` | `bpp-solvers`: roda os solvers e grava `resultados/solvers.csv` + JSONs das soluções |
+| `src/bpp/experimentos/tabela.py` | `bpp-tabela`: monta a tabela da seção (Markdown ou `--latex`) a partir do CSV |
+| `src/bpp/dados/azure.py` | `bpp-dataset`: baixa o vmtable e gera `instancia_<N>_vms.csv` |
+| `src/bpp/dados/sintetico.py` | `bpp-sintetico`: instâncias **sintéticas** só para testar o código (não usar no relatório) |
+
+Para usar outro solver, basta criar uma subclasse de `Solver` que implemente
+`_otimizar(dados, op)` e registrá-la em `obter_solver`.
 
 ## Instalação
 
 ```bash
-pip install -r requirements.txt     # na raiz do repositório (pandas, gurobipy, pyscipopt)
+make setup     # ou: uv sync   (pandas, gurobipy, pyscipopt)
 ```
 
 - **SCIP**: o `pyscipopt` já vem com o SCIP, não precisa de licença.
-- **Gurobi**: o `pip install` traz uma licença restrita (máx. 2000 variáveis e 2000
+- **Gurobi**: o pacote traz uma licença restrita (máx. 2000 variáveis e 2000
   restrições), que só roda as instâncias de 50 VMs. Para as de 100 e 500 é preciso a
   **licença acadêmica**: criar conta em gurobi.com com o e-mail da USP e gerar uma
   "Named-User Academic License" (rodar `grbgetkey <chave>` **conectado à rede da USP**
   ou VPN) ou uma "Academic WLS License" (baixar o `gurobi.lic`). O arquivo `gurobi.lic`
-  fica na pasta do usuário e o `gurobipy` o encontra sozinho.
+  fica na pasta do usuário e o `gurobipy` o encontra sozinho (ou via `GRB_LICENSE_FILE`).
 
 ## Instâncias
 
-As instâncias são os CSVs `instancias/instancia_<N>_vms.csv` gravados pelo
-`particao_dataset.py` (colunas `vmid`, `vmcorecount`, `vmmemory`; as N primeiras VMs do
-vmtable). Para gerar as de 50, 100, 500, 1000 e 2000 VMs, trocar `N_AMOSTRAS` no script e rodá-lo uma
-vez para cada valor.
+`data/instancias/instancia_<N>_vms.csv`: colunas `vmid`, `vmcorecount`, `vmmemory`; as N
+primeiras VMs do vmtable. São geradas por `bpp-dataset --n <N>` (ou `make instancias
+NS="..."`), que baixa o dataset para `data/raw/` se ele ainda não estiver lá. O
+`bpp-solvers` também gera sozinho uma instância nesse padrão de nome que não exista.
 
-As de `instancias/teste/` são **sintéticas** (`gerar_instancia_teste.py`) e servem só para
+As de `data/instancias/teste/` são **sintéticas** (`bpp-sintetico`) e servem só para
 testar o código.
 
 ## Como rodar
 
-Sempre a partir da raiz do repositório.
+Sempre a partir da raiz do repositório. Cada alvo do Makefile corresponde a um comando:
 
 ```bash
 # experimento principal: instâncias reais, os dois solvers, 600 s, 1 thread
-python modelo/rodar_solvers.py instancias/instancia_50_vms.csv instancias/instancia_100_vms.csv instancias/instancia_500_vms.csv instancias/instancia_1000_vms.csv instancias/instancia_2000_vms.csv --tempo 600
+make solvers
+uv run bpp-solvers data/instancias/instancia_{50,100,500,1000,2000}_vms.csv --tempo 600
 
 # tabela de resultados da seção 4 (só a configuração sem reforços), pronta para o .tex
-python modelo/tabela_solvers.py resultados/solvers.csv --latex --reforcos nenhum
+make tabela
+uv run bpp-tabela resultados/solvers.csv --latex --reforcos nenhum
 
-# teste dos reforços (as 4 combinações) nas instâncias de 100 e 500 VMs
-python modelo/rodar_solvers.py instancias/instancia_100_vms.csv instancias/instancia_500_vms.csv --reforcos todos --tempo 600 --saida resultados/reforcos.csv --solucoes ""
+# teste dos reforços (as 4 combinações) em todas as instâncias (50 a 2000)
+make reforcos                       # ou NS_REFORCOS="100 500" para restringir
 
-# só R2 (a melhor configuração) nas instâncias de 1000 e 2000 VMs
-python modelo/rodar_solvers.py instancias/instancia_1000_vms.csv instancias/instancia_2000_vms.csv --reforcos simetria --tempo 600 --saida resultados/reforcos.csv --solucoes ""
-
-# comparação com S_k = n (mostra por que a redução é necessária)
-python modelo/rodar_solvers.py instancias/instancia_50_vms.csv instancias/instancia_100_vms.csv --s-ingenuo --tempo 600 --saida resultados/s_ingenuo.csv --solucoes ""
+# comparação com S_k = n em todas as instâncias (mostra por que a redução é necessária)
+make s-ingenuo                      # ou NS_INGENUO="50 100" para restringir
 
 # teste rápido do código com as instâncias sintéticas (resultados separados)
-python modelo/rodar_solvers.py instancias/teste/*.csv --tempo 60 --saida resultados/teste/teste_sintetico.csv --solucoes resultados/teste/solucoes
+make teste-sintetico
 ```
 
-Opções úteis: `--solver gurobi scip`, `--tempo`, `--threads`, `--reforcos
-{nenhum,xy,simetria,ambos,todos}`, `--sem-warm-start`, `--saida`, `--solucoes`,
-`--col-cpu/--col-ram/--col-id` (se o particionador usar outros nomes de coluna),
-`--verbose` (log do solver).
+Opções úteis do `bpp-solvers` (no Makefile, via `EXTRA_ARGS`): `--solver gurobi scip`,
+`--tempo`, `--threads`, `--reforcos {nenhum,xy,simetria,ambos,todos}`,
+`--sem-warm-start`, `--escala-custo`, `--semente`, `--saida`, `--solucoes`,
+`--col-cpu/--col-ram/--col-id` (se o CSV usar outros nomes de coluna), `--verbose`
+(log do solver).
 
 Cada execução **acrescenta** uma linha ao CSV de saída (não sobrescreve).
 
