@@ -31,6 +31,7 @@ from bpp.modelo.comum import (Opcoes, Resultado, arredondar_bound, calcular_gap,
 from bpp.modelo.instancia import Instancia, ler_csv
 from bpp.modelo.limitantes import (calcular_S, custo, limitantes_inferiores,
                                    melhor_guloso, verificar)
+from bpp.modelo.solver import SOLVERS, obter_solver
 
 CONFIGS = {
     "nenhum":   dict(reforco_xy=False, simetria=False),
@@ -46,16 +47,6 @@ COLUNAS = ["instancia", "n_vms", "metodo", "reforcos", "status", "custo", "bound
            "S_1", "S_2", "S_3", "n_vars",
            "n_restricoes", "nos", "tempo_limite", "threads", "warm_start", "escala_custo", "valida",
            "mensagem", "maquina", "data"]
-
-
-def _resolver(solver: str):
-    if solver == "gurobi":
-        from bpp.modelo.gurobi import resolver
-    elif solver == "scip":
-        from bpp.modelo.scip import resolver
-    else:
-        raise ValueError(solver)
-    return resolver
 
 
 def maquina() -> str:
@@ -96,7 +87,7 @@ def rodar_instancia(caminho: str, solver: str, op: Opcoes, nome_config: str = "n
     if s_ingenuo:  # S_k = n, só para mostrar no relatório o tamanho do modelo sem a redução
         S = {t.k: inst.n for t in inst.tipos}
 
-    res = _resolver(solver)(inst, S, op, sol0)
+    res = obter_solver(solver).resolver(inst, S, op, sol0)
 
     erros = verificar(inst, res.solucao) if res.solucao is not None else ["sem solução"]
     por_tipo = {t.k: 0 for t in inst.tipos}
@@ -152,7 +143,7 @@ def main() -> None:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("instancias", nargs="+", help="CSVs do particionador (aceita curingas)")
     ap.add_argument("--solver", nargs="+", default=["gurobi", "scip"],
-                    choices=["gurobi", "scip"])
+                    choices=list(SOLVERS))
     ap.add_argument("--tempo", type=float, default=600.0, help="limite de tempo (s)")
     ap.add_argument("--threads", type=int, default=1)
     ap.add_argument("--gap", type=float, default=1e-4, help="tolerância de gap relativo")
