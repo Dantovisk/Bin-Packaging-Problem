@@ -108,6 +108,7 @@ def submeter(a: argparse.Namespace) -> None:
     extra = shlex.split(a.extra_args)
     comuns = [f"--cpus-per-task={a.threads}",
               *([f"--partition={a.particao}"] if a.particao else []), *shlex.split(a.sbatch_args)]
+    n_gurobi = 0
 
     novo_tsv = not (rodada / "plano.tsv").exists()
     ids = []
@@ -129,13 +130,22 @@ def submeter(a: argparse.Namespace) -> None:
                        "--reforcos", e.cfg, *(["--s-ingenuo"] if e.ingenuo else []),
                        "--saida", str(rodada / f"{e.nome}.csv"),
                        "--solucoes", a.solucoes if e.grupo == "solvers" else "", *extra]
-            nome_job = f"bpp-{e.nome}"
+            nome_job, extra_job = f"bpp-{e.nome}", []
+            if e.solver == "gurobi" and a.gurobi_simult > 0:
+                # licença WLS acadêmica: 2 sessões. Jobs com o mesmo nome + singleton
+                # rodam um por vez, então cada faixa usa no máximo 1 sessão.
+                nome_job = f"bpp-gurobi-faixa{n_gurobi % a.gurobi_simult + 1}"
+                extra_job = ["--dependency=singleton",
+                             f"--export=ALL,BPP_ESPERA_FIM={int(a.gurobi_espera)}"]
+                seg += int(a.gurobi_espera)
+                n_gurobi += 1
             job = _sbatch([f"--job-name={nome_job}", f"--output={logs}/{e.nome}-%j.out",
-                           f"--time={hms(seg)}", f"--mem={mem}G", *comuns],
+                           f"--time={hms(seg)}", f"--mem={mem}G", *extra_job, *comuns],
                           comando, a.dry_run, f"DRY{idx}")
             ids.append(job)
             tsv.write(f"{e.nome}\t{job}\t{hms(seg)}\t{mem}\t{nv}\n")
-            print(f"  {job:>10}  {e.nome:<38} tempo={hms(seg)} mem={mem}G vars={nv}")
+            print(f"  {job:>10}  {e.nome:<38} tempo={hms(seg)} mem={mem}G vars={nv}"
+                  + (f" [{nome_job}]" if extra_job else ""))
 
     if not ids:
         print("nada a submeter")
@@ -200,6 +210,10 @@ def main() -> None:
     ap.add_argument("--margem", type=float, default=300, help="segundos somados ao --time")
     ap.add_argument("--fator-mem", type=float, default=2.0)
     ap.add_argument("--mem-min", type=int, default=2, help="GB mínimos por job")
+    ap.add_argument("--gurobi-simult", type=int, default=2,
+                    help="jobs Gurobi simultâneos (sessões da licença; 0 = sem limite)")
+    ap.add_argument("--gurobi-espera", type=float, default=300,
+                    help="s que o job Gurobi segura a faixa após terminar (token WLS dura 5 min)")
     ap.add_argument("--particao")
     ap.add_argument("--log-dir", default="logs")
     ap.add_argument("--sbatch-args", default="", help="opções extras do sbatch")

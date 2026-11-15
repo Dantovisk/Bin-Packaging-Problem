@@ -17,5 +17,11 @@ command -v uv >/dev/null 2>&1 || make uv
 echo "[$(date -Is)] $(hostname) | cpus: ${SLURM_CPUS_PER_TASK:-?} | $*"
 status=0
 "$@" || status=$?
+
+# Jobs Gurobi: segura a faixa até o token WLS expirar, para não exceder as sessões da licença
+if [[ "${BPP_ESPERA_FIM:-0}" -gt 0 ]]; then
+    echo "[$(date -Is)] aguardando ${BPP_ESPERA_FIM}s (token Gurobi)"
+    sleep "$BPP_ESPERA_FIM"
+fi
 echo "[$(date -Is)] fim (status $status)"
 exit "$status"

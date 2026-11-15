@@ -48,6 +48,8 @@ SLURM_FATOR_MEM ?= 2
 SLURM_MEM_MIN   ?= 2
 SLURM_DRY       ?=
 RODADA          ?=
+GUROBI_SIMULT   ?= 2
+GUROBI_ESPERA   ?= 300
 
 instancias_de = $(foreach n,$(1),$(INST_DIR)/instancia_$(n)_vms.csv)
 INSTANCIAS     = $(call instancias_de,$(NS))
@@ -121,6 +123,7 @@ slurm-experimentos: setup instancias ## experimentos no SLURM: 1 job por execuç
 		--resultados $(RESULT_DIR) --solucoes="$(SOLUCOES)" --uv $(UV) \
 		--folga $(SLURM_FOLGA) --margem $(SLURM_MARGEM) --fator-mem $(SLURM_FATOR_MEM) \
 		--mem-min $(SLURM_MEM_MIN) --log-dir $(SLURM_LOG_DIR) --sbatch-args="$(SLURM_ARGS)" \
+		--gurobi-simult $(GUROBI_SIMULT) --gurobi-espera $(GUROBI_ESPERA) \
 		$(if $(SLURM_PARTICAO),--particao $(SLURM_PARTICAO)) \
 		$(if $(RODADA),--rodada $(RODADA)) $(if $(SLURM_DRY),--dry-run)
 

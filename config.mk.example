@@ -27,3 +27,6 @@
 # SLURM_MARGEM    = 600
 # SLURM_FATOR_MEM = 3
 # SLURM_MEM_MIN   = 4
+# Jobs Gurobi simultâneos (sessões da licença WLS acadêmica = 2) e espera do token:
+# GUROBI_SIMULT = 2
+# GUROBI_ESPERA = 300
