@@ -52,6 +52,8 @@ RODADA          ?=
 GUROBI_SIMULT   ?= 2
 GUROBI_ESPERA   ?= 300
 
+# subpasta de SOLUCOES por experimento; vazio se SOLUCOES="" (não grava JSON)
+sol_dir = $(if $(SOLUCOES),$(SOLUCOES)/$(1))
 instancias_de = $(foreach n,$(1),$(INST_DIR)/instancia_$(n)_vms.csv)
 INSTANCIAS     = $(call instancias_de,$(NS))
 COMUM          = --solver $(SOLVERS) --tempo $(TEMPO) --threads $(THREADS) $(EXTRA_ARGS)
@@ -98,11 +100,11 @@ solvers: instancias ## Experimento principal: NS x SOLVERS, grava SAIDA e SOLUCO
 
 reforcos: ## As 4 combinações de reforços (R1/R2) em NS_REFORCOS (padrão: NS)
 	$(RUN) bpp-solvers $(call instancias_de,$(NS_REFORCOS)) $(COMUM) --reforcos todos \
-		--saida $(RESULT_DIR)/reforcos.csv --solucoes ""
+		--saida $(RESULT_DIR)/reforcos.csv --solucoes "$(call sol_dir,reforcos)"
 
 s-ingenuo: ## Comparação com S_k = n em NS_INGENUO (padrão: NS; ~3n² variáveis)
 	$(RUN) bpp-solvers $(call instancias_de,$(NS_INGENUO)) $(COMUM) --s-ingenuo \
-		--saida $(RESULT_DIR)/s_ingenuo.csv --solucoes ""
+		--saida $(RESULT_DIR)/s_ingenuo.csv --solucoes "$(call sol_dir,s_ingenuo)"
 
 experimentos: solvers reforcos s-ingenuo ## Roda tudo do relatório
 

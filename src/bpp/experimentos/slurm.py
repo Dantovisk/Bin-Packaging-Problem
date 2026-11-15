@@ -92,6 +92,13 @@ def _sbatch(opcoes: list[str], comando: list[str], dry: bool, ficticio: str) -> 
     return saida.strip().split(";")[0]
 
 
+def _pasta_solucoes(solucoes: str, grupo: str) -> str:
+    """Mesma organização do Makefile: solvers na raiz, demais em subpastas."""
+    if not solucoes or grupo == "solvers":
+        return solucoes
+    return str(Path(solucoes) / grupo)
+
+
 def _feito(rodada: Path, nome: str) -> bool:
     return (rodada / f"{nome}.csv").exists() or (rodada / "juntados" / f"{nome}.csv").exists()
 
@@ -129,7 +136,7 @@ def submeter(a: argparse.Namespace) -> None:
                        "--tempo", str(a.tempo), "--threads", str(a.threads),
                        "--reforcos", e.cfg, *(["--s-ingenuo"] if e.ingenuo else []),
                        "--saida", str(rodada / f"{e.nome}.csv"),
-                       "--solucoes", a.solucoes if e.grupo == "solvers" else "", *extra]
+                       "--solucoes", _pasta_solucoes(a.solucoes, e.grupo), *extra]
             nome_job, extra_job = f"bpp-{e.nome}", []
             if e.solver == "gurobi" and a.gurobi_simult > 0:
                 # licença WLS acadêmica: 2 sessões. Jobs com o mesmo nome + singleton
