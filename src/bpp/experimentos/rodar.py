@@ -74,7 +74,7 @@ def maquina() -> str:
 
 
 def salvar_solucao_json(inst: Instancia, metodo: str, res: Resultado, pasta: str) -> str:
-    """Formato proposto para o JSON comum (ajustar ao que for combinado com a Pessoa 2)."""
+    """JSON comum a todos os métodos, lido pelo bpp-validador."""
     os.makedirs(pasta, exist_ok=True)
     tipos = {t.k: t for t in inst.tipos}
     dados = {

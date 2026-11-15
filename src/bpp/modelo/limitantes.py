@@ -179,7 +179,7 @@ def calcular_S(inst: Instancia, ub: float) -> dict[int, int]:
 
 
 def verificar(inst: Instancia, sol: Solucao) -> list[str]:
-    """Checagem rápida (o validador oficial é o validador.py da Pessoa 2)."""
+    """Checagem rápida (o validador oficial, independente deste código, é o bpp-validador)."""
     erros = []
     tipos = {t.k: t for t in inst.tipos}
     vistos = [0] * inst.n

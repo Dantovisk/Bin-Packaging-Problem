@@ -15,6 +15,7 @@ bpp-dataset = "bpp.dados.azure:main"
 bpp-sintetico = "bpp.dados.sintetico:main"
 bpp-solvers = "bpp.experimentos.rodar:main"
 bpp-tabela = "bpp.experimentos.tabela:main"
+bpp-validador = "bpp.experimentos.validador:main"
 bpp-slurm = "bpp.experimentos.slurm:main"
 bpp-juntar = "bpp.experimentos.slurm:main_juntar"
 

@@ -32,6 +32,7 @@ NS_INGENUO    ?= $(NS)
 NS_SINTETICAS ?= 50 100 500
 TEMPO_TESTE   ?= 60
 TABELA_ARGS   ?= --latex --reforcos nenhum
+JSONS         ?= $(SOLUCOES)
 
 # --- SLURM ------------------------------------------------------------------
 SLURM_ALVO     ?= solvers
@@ -57,7 +58,7 @@ COMUM          = --solver $(SOLVERS) --tempo $(TEMPO) --threads $(THREADS) $(EXT
 
 .DEFAULT_GOAL := help
 .PHONY: help uv setup dados instancias sinteticas solvers reforcos s-ingenuo \
-        experimentos teste-sintetico tabela test slurm slurm-experimentos juntar \
+        experimentos teste-sintetico tabela validador test slurm slurm-experimentos juntar \
         clean clean-dados
 
 help: ## Mostra esta ajuda
@@ -112,6 +113,9 @@ teste-sintetico: ## Roda os solvers nas instâncias sintéticas (TEMPO_TESTE s)
 
 tabela: ## Tabela de resultados a partir de SAIDA (TABELA_ARGS)
 	@$(RUN) bpp-tabela $(SAIDA) $(TABELA_ARGS)
+
+validador: ## Valida os JSONs de solução contra os CSVs (JSONS: arquivos, pastas ou curingas)
+	$(RUN) bpp-validador $(JSONS) --inst-dir $(INST_DIR) $(TESTE_DIR) --raw-dir $(RAW_DIR)
 
 test: ## Testes automatizados (pytest)
 	$(RUN) pytest -q
