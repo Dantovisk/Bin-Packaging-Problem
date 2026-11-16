@@ -1,16 +1,17 @@
 """Roda Gurobi e/ou SCIP nas instâncias e registra os resultados em CSV.
 
-Exemplos (a partir da raiz do repositório; as instâncias são os CSVs
-instancias/instancia_<N>_vms.csv gravados pelo particao_dataset.py):
+Exemplos (a partir da raiz do repositório). Instâncias reais ausentes
+(data/instancias/instancia_<N>_vms.csv) são geradas a partir do dataset, que é
+baixado se preciso.
 
     # instâncias reais, os dois solvers, 600 s, sem reforços
-    python modelo/rodar_solvers.py instancias/instancia_50_vms.csv instancias/instancia_100_vms.csv instancias/instancia_500_vms.csv
+    bpp-solvers data/instancias/instancia_50_vms.csv data/instancias/instancia_100_vms.csv
 
     # teste dos reforços na instância de 100 VMs, só SCIP
-    python modelo/rodar_solvers.py instancias/instancia_100_vms.csv --solver scip --reforcos todos
+    bpp-solvers data/instancias/instancia_100_vms.csv --solver scip --reforcos todos
 
     # só uma instância, mostrando o log do solver
-    python modelo/rodar_solvers.py instancias/instancia_50_vms.csv --solver gurobi --verbose
+    bpp-solvers data/instancias/instancia_50_vms.csv --solver gurobi --verbose
 
 A Pessoa 5 pode importar `rodar_instancia` direto no rodar_experimentos.py.
 """
@@ -23,17 +24,17 @@ import glob
 import json
 import os
 import platform
-import sys
+import subprocess
 import time
 from datetime import datetime
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
-from instancia import Instancia, ler_csv  # noqa: E402
-from limitantes import (calcular_S, custo, limitantes_inferiores,  # noqa: E402
-                        melhor_guloso, verificar)
-from modelo_comum import (Opcoes, Resultado, arredondar_bound, calcular_gap,  # noqa: E402
-                          mdc_custos)
+from bpp.dados.azure import garantir_csv
+from bpp.modelo.comum import (Opcoes, Resultado, arredondar_bound, calcular_gap,
+                              mdc_custos)
+from bpp.modelo.instancia import Instancia, ler_csv
+from bpp.modelo.limitantes import (calcular_S, custo, limitantes_inferiores,
+                                   melhor_guloso, verificar)
+from bpp.modelo.solver import SOLVERS, obter_solver
 
 CONFIGS = {
     "nenhum":   dict(reforco_xy=False, simetria=False),
@@ -51,23 +52,29 @@ COLUNAS = ["instancia", "n_vms", "metodo", "reforcos", "status", "custo", "bound
            "mensagem", "maquina", "data"]
 
 
-def _resolver(solver: str):
-    if solver == "gurobi":
-        from modelo_gurobi import resolver
-    elif solver == "scip":
-        from modelo_scip import resolver
-    else:
-        raise ValueError(solver)
-    return resolver
+def modelo_cpu() -> str:
+    # platform.processor() volta vazio no Linux, onde rodam os experimentos
+    try:
+        if platform.system() == "Linux":
+            with open("/proc/cpuinfo", encoding="utf-8") as f:
+                for linha in f:
+                    if linha.startswith("model name"):
+                        return " ".join(linha.split(":", 1)[1].split())
+        elif platform.system() == "Darwin":
+            return subprocess.run(["sysctl", "-n", "machdep.cpu.brand_string"],
+                                  capture_output=True, text=True, check=True).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        pass
+    return platform.processor() or platform.machine()
 
 
 def maquina() -> str:
-    return f"{platform.node()} | {platform.processor() or platform.machine()} | " \
+    return f"{platform.node()} | {modelo_cpu()} | " \
            f"{os.cpu_count()} cpus | {platform.system()} {platform.release()}"
 
 
 def salvar_solucao_json(inst: Instancia, metodo: str, res: Resultado, pasta: str) -> str:
-    """Formato proposto para o JSON comum (ajustar ao que for combinado com a Pessoa 2)."""
+    """JSON comum a todos os métodos, lido pelo bpp-validador."""
     os.makedirs(pasta, exist_ok=True)
     tipos = {t.k: t for t in inst.tipos}
     dados = {
@@ -99,7 +106,7 @@ def rodar_instancia(caminho: str, solver: str, op: Opcoes, nome_config: str = "n
     if s_ingenuo:  # S_k = n, só para mostrar no relatório o tamanho do modelo sem a redução
         S = {t.k: inst.n for t in inst.tipos}
 
-    res = _resolver(solver)(inst, S, op, sol0)
+    res = obter_solver(solver).resolver(inst, S, op, sol0)
 
     erros = verificar(inst, res.solucao) if res.solucao is not None else ["sem solução"]
     por_tipo = {t.k: 0 for t in inst.tipos}
@@ -153,9 +160,10 @@ def anexar_csv(linha: dict, caminho: str) -> None:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("instancias", nargs="+", help="CSVs do particionador (aceita curingas)")
+    ap.add_argument("instancias", nargs="+",
+                    help="CSVs das instâncias (aceita curingas; instancia_<N>_vms.csv ausente é gerada)")
     ap.add_argument("--solver", nargs="+", default=["gurobi", "scip"],
-                    choices=["gurobi", "scip"])
+                    choices=list(SOLVERS))
     ap.add_argument("--tempo", type=float, default=600.0, help="limite de tempo (s)")
     ap.add_argument("--threads", type=int, default=1)
     ap.add_argument("--gap", type=float, default=1e-4, help="tolerância de gap relativo")
@@ -176,6 +184,7 @@ def main() -> None:
     a = ap.parse_args()
 
     arquivos = sorted({f for padrao in a.instancias for f in (glob.glob(padrao) or [padrao])})
+    arquivos = [str(garantir_csv(f)) for f in arquivos]
     configs = list(CONFIGS) if a.reforcos == "todos" else [a.reforcos]
     leitura = dict(col_id=a.col_id, col_cpu=a.col_cpu, col_ram=a.col_ram)
 

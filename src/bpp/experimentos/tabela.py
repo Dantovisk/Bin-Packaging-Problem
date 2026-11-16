@@ -1,7 +1,7 @@
 """Gera as tabelas da seção "Solução via Solvers" a partir de resultados/solvers.csv.
 
-    python modelo/tabela_solvers.py resultados/solvers.csv                              # Markdown
-    python modelo/tabela_solvers.py resultados/solvers.csv --latex --reforcos nenhum    # LaTeX
+    bpp-tabela resultados/solvers.csv                              # Markdown
+    bpp-tabela resultados/solvers.csv --latex --reforcos nenhum    # LaTeX
 
 Com --reforcos, só entra essa configuração e a coluna "Reforços" sai da tabela (é o
 formato da tabela de resultados do relatorio/secao_solvers.tex). No LaTeX os números

@@ -3,7 +3,7 @@
 O leitor tenta descobrir sozinho as colunas de identificador, CPU e RAM do CSV
 (aceita nomes como "cpu", "cores", "vmcorecountbucket", "ram", "memoria",
 "vmmemorybucket"...). Se o particionador usar outros nomes, passe-os em
-`col_cpu`, `col_ram` e `col_id` (ou pelas opções --col-* do rodar_solvers.py).
+`col_cpu`, `col_ram` e `col_id` (ou pelas opções --col-* do bpp-solvers).
 
 Valores em faixa aberta do Azure (ex.: ">24" núcleos, ">64" GB) são convertidos
 pelo dicionário FAIXAS_ABERTAS. Confirmar com a Pessoa 1 qual valor o

@@ -21,8 +21,8 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass, field
 
-from instancia import Instancia
-from limitantes import Solucao
+from bpp.modelo.instancia import Instancia
+from bpp.modelo.limitantes import Solucao
 
 
 @dataclass
